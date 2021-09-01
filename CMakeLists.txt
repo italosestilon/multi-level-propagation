@@ -9,7 +9,8 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/")
 include(CTest)
 enable_testing()
 
-add_subdirectory(label-propagation)
+add_subdirectory(label_propagation)
+add_subdirectory(test)
 
 # add_library(label-propagation label-propagation.cpp)
 

@@ -17,11 +17,8 @@ file(GLOB IFT_EXTERNAL
 foreach(lib ${IFT_EXTERNAL})
     if(EXISTS ${lib}/src)
         message(STATUS ${lib};)
-        list(APPEND IFT_EXTERNAL_INCLUDE ${lib}/include)
-        list(APPEND IFT_EXTERNAL_LIB ${lib}/lib)
+        list(APPEND IFT_INCLUDE_DIRS ${lib}/include)
     endif()
 endforeach()
-
-SET (IFT_INCLUDE_DIRS ${IFT_INCLUDE_DIRS} ${IFT_EXTERNAL_INCLUDE})
 
 find_package_handle_standard_args(IFT REQUIRED_VARS IFT_LIBRARY IFT_INCLUDE_DIRS)
