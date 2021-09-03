@@ -1,4 +1,6 @@
-set(TEST_SRC test_linspace_vector_gen.cpp)
+set(TEST_SRC 
+  test_linspace_vector_gen.cpp
+  test_pq.cpp)
 
 add_executable(lp_test ${TEST_SRC})
 

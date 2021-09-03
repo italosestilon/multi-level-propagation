@@ -60,3 +60,6 @@ Graph *semi_supervised_train(float **features,
             }
         }
     }
+    
+    return g;
+}

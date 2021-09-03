@@ -25,6 +25,7 @@ pif PairPQ::pop() {
     swap(0, size_ - 1);
     size_--;
     heapify(0);
+    index_.erase(p.first);
     return p;
 }
 
@@ -43,7 +44,14 @@ void PairPQ::push(pif p) {
     size_++;
     pq_[size_ - 1] = p;
     index_[p.first] = size_ - 1;
-    heapify(size_ - 1);
+    uli i = size_ - 1;
+    uli parent = (i - 1) / 2;
+
+    while (i > 0 && pq_[parent].second > pq_[i].second) {
+        swap(i, parent);
+        i = parent;
+        parent = (i - 1) / 2;
+    }
 }
 
 void PairPQ::swap(uli i, uli j) {
@@ -52,7 +60,7 @@ void PairPQ::swap(uli i, uli j) {
     pq_[j] = temp;
     uli temp_index = index_[i];
     index_[temp.first] = j;
-    index_[pq_[i].second] = i;
+    index_[pq_[i].first] = i;
 }
 
 void PairPQ::heapify(uli i) {
@@ -72,7 +80,7 @@ void PairPQ::heapify(uli i) {
 }
 
 void PairPQ::decrease_key(uli index, float key) {
-    pq_[index].first = key;
+    pq_[index].second = key;
     uli i = index;
     while (i > 0 && pq_[(i - 1) / 2].second > pq_[i].second) {
         swap(i, (i - 1) / 2);

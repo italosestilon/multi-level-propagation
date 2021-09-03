@@ -18,7 +18,6 @@ public:
     pif pop();
     bool empty();
     uli size();
-    void increase_key(uli index, float key);
     void decrease_key(uli index, float key);
     uli get_index(uli key);
 
