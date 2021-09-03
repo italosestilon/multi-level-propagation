@@ -1,5 +1,14 @@
-set(SRC label_propagation.cpp utils.cpp)
-set(HEADERS label_propagation.h utils.h)
+set(SRC 
+    label_propagation.cpp
+    utils.cpp
+    opf.cpp
+    priority_queue.cpp)
+
+set(HEADERS
+    label_propagation.h
+    utils.h
+    opf.h
+    priority_queue.h)
 
 set(HEADERS ${HEADERS} PARENT_SCOPE)
 
