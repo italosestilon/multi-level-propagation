@@ -91,3 +91,7 @@ void PairPQ::decrease_key(uli index, float key) {
 uli PairPQ::get_index(uli key) {
     return index_[key];
 }
+
+bool PairPQ::empty() {
+    return size_ == 0;
+}

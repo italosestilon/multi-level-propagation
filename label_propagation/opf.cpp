@@ -57,6 +57,7 @@ Graph *semi_supervised_train(float **features,
                 g->get_path_value()[j] = candidate_value;
                 g->get_nodes()[j].set_pred(j);
                 g->get_labels()[j] = g->get_labels()[node_id];
+                pq.decrease_key(pq.get_index(node_id), candidate_value);
             }
         }
     }
