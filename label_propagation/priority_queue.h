@@ -6,19 +6,19 @@
 using namespace std;
 
 typedef unsigned long int uli;
-typedef pair<uli, float> pif;
+typedef pair<uli, double> pif;
 
 // define mutable min priority queue of pairs
 class PairPQ {
 public:
-    PairPQ(uli *keys, float *values, uli size);
+    PairPQ(uli *keys, double *values, uli size);
     PairPQ(uli size);
     ~PairPQ();
     void push(pif p);
     pif pop();
     bool empty();
     uli size();
-    void decrease_key(uli index, float key);
+    void decrease_key(uli index, double key);
     uli get_index(uli key);
 
 private:

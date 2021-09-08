@@ -102,11 +102,19 @@ TEST(IFT, computeIFT) {
         shape,
         2);
 
+    ift_numpy_header *opf_certainty_header = iftCreateNumPyHeader(
+        IFT_FLT_TYPE,
+        shape,
+        2);
+
     void *features_data = iftReadNumPy("../../features_ift.npy", &features_header);
     void* seeds_data = iftReadNumPy("../../labels_to_ift.npy", &seeds_header);
+    void* opf_certainty_data = iftReadNumPy("../../opf_certainty.npy", &opf_certainty_header);
 
     float *features = (float*)features_data;
     uint64_t *seeds = (uint64_t*)seeds_data;
+    float *opf_certainty = (float*)opf_certainty_data;
+
     uint32_t height = shape[0];
     uint32_t width = shape[1];
     uint64_t n_features = shape[2];
@@ -114,7 +122,7 @@ TEST(IFT, computeIFT) {
 
     uint64_t *pred_out = new uint64_t[n_nodes];
     uint64_t *root_out = new uint64_t[n_nodes];
-    float *cost_out = new float[n_nodes];
+    double *cost_out = new double[n_nodes];
     bool *visited_out = new bool[n_nodes];
 
     for (uint64_t i = 0; i < n_nodes; i++) {
@@ -125,6 +133,7 @@ TEST(IFT, computeIFT) {
                 height,
                 width,
                 seeds,
+                opf_certainty,
                 n_nodes,
                 n_features,
                 pred_out,
@@ -135,21 +144,28 @@ TEST(IFT, computeIFT) {
     uint64_t *labels_from_ift = new uint64_t[n_nodes];
     for (uint64_t i = 0; i < n_nodes; i++) {
         ASSERT_TRUE(visited_out[i]);
-        ASSERT_TRUE(cost_out[i] < numeric_limits<float>::max());
-        if (seeds[i] != 0) {
+        ASSERT_TRUE(cost_out[i] < numeric_limits<double>::max());
+        /*if (seeds[i] != 0) {
             ASSERT_TRUE(cost_out[i] == 0.0);
             ASSERT_TRUE(pred_out[i] == i);
             ASSERT_TRUE(root_out[i] == i);
         } else {
             ASSERT_TRUE(pred_out[i] != i);
             ASSERT_TRUE(root_out[i] != i);
-        }
+        }*/
         
         labels_from_ift[i] = seeds[root_out[i]];
 
     }
 
-    float *certainty = compute_certainty(height, width, root_out, labels_from_ift);
+    double *certainty = compute_certainty(
+        height,
+        width,
+        cost_out,
+        labels_from_ift,
+        root_out,
+        features,
+        n_features);
 
     // test if certainty is greater than zero
     for (uint64_t i = 0; i < n_nodes; i++) {
@@ -157,7 +173,7 @@ TEST(IFT, computeIFT) {
     }
 
     ift_numpy_header *certainty_header = iftCreateNumPyHeader(
-        IFT_FLT_TYPE,
+        IFT_DBL_TYPE,
         shape,
         2);
 
@@ -177,10 +193,10 @@ TEST(IFT, computeIFT) {
         2);
     
 
-    iftWriteNumPy(certainty_header, certainty, "../../certainty_ift.npy");
-    iftWriteNumPy(pred_header, pred_out, "../../pred_ift.npy");
-    iftWriteNumPy(root_header, root_out, "../../root_ift.npy");
-    iftWriteNumPy(labels_header, labels_from_ift, "../../labels_from_ift.npy");
+    iftWriteNumPy(certainty_header, certainty, "../../certainty_ift_2.npy");
+    iftWriteNumPy(pred_header, pred_out, "../../pred_ift_2.npy");
+    iftWriteNumPy(root_header, root_out, "../../root_ift_2.npy");
+    iftWriteNumPy(labels_header, labels_from_ift, "../../labels_from_ift_2.npy");
 
     delete[] certainty;
     delete[] certainty_header;
@@ -193,6 +209,7 @@ TEST(IFT, computeIFT) {
     delete[] features_header;
     delete[] seeds_header;
     delete[] features;
+    delete[] opf_certainty;
     delete[] seeds;
     delete[] labels_from_ift;
     delete[] shape;

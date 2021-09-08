@@ -1,6 +1,6 @@
 #include <label_propagation/priority_queue.h>
 
-PairPQ::PairPQ(uli *keys, float *values, uli size) {
+PairPQ::PairPQ(uli *keys, double *values, uli size) {
     size_ = size;
     capacity_ = size;
     pq_ = new pif[size];
@@ -79,7 +79,7 @@ void PairPQ::heapify(uli i) {
     }
 }
 
-void PairPQ::decrease_key(uli index, float key) {
+void PairPQ::decrease_key(uli index, double key) {
     pq_[index].second = key;
     uli i = index;
     while (i > 0 && pq_[(i - 1) / 2].second > pq_[i].second) {
