@@ -1,77 +1,43 @@
-#include <ift/core/io/NumPy.h>
-#include <ift/core/dtypes/BasicDataTypes.h>
-
 #include <gtest/gtest.h>
 
 #include <label_propagation/ift.h>
+#include <label_propagation/utils.h>
 
 #include <limits>
 
 #include <vector>
 
+#include <random>
+
 using namespace std;
 
-TEST(IFT, load_array) {
-    long *shape = new long[3];
-    shape[0] = 1024;
-    shape[1] = 1024;
-    shape[2] = 64;
-    size_t n_dims = 3;
+TEST(IFT, euclidean_distance) {
+    // generate two random points as arrays
+    const uint32_t size = 64;
+    float *p1 = new float[size];
+    float *p2 = new float[size];
 
-    ift_numpy_header *features_header = iftCreateNumPyHeader(
-        IFT_FLT_TYPE, 
-        shape,
-        n_dims);
-
-    ift_numpy_header *seeds_header = iftCreateNumPyHeader(
-        IFT_LONG_TYPE,
-        shape,
-        2);
-
-    void *features_data = iftReadNumPy("../../features_ift.npy", &features_header);
-    void* seeds_data = iftReadNumPy("../../labels_to_ift.npy", &seeds_header);
-
-    //ASSERT_EQ(header->dtype, IFT_FLT_TYPE);
-    //ASSERT_EQ(header->n_dims, n_dims);
-    //ASSERT_EQ(header->shape[0], 1024);
-    //ASSERT_EQ(header->shape[1], 1024);
-
-    float *features = (float*)features_data;
-    int64_t *seeds = (int64_t*)seeds_data;
-
-    int64_t *new_seeds = new int64_t[1024*1024];
-    for (uint64_t i = 0; i < 1024; i++) {
-        for (uint64_t  j = 0; j < 1024; j++) {
-            int64_t seed = seeds[i*1024 + j];
-            new_seeds[i*1024 + j] = seed;
-        }
+    mt19937 rng;
+    uniform_real_distribution<float> dist(-1.0, 1.0);
+    // populate with random values
+    for (uint32_t i = 0; i < size; i++) {
+        p1[i] = dist(rng);
+        p2[i] = dist(rng);
     }
 
-    iftWriteNumPy(seeds_header, new_seeds, "../../seeds_test.npy");
+    // compute distance
+    double dist_euclidean = euclidean_distance(p1, p2, size);
 
-    delete[] shape;
-    delete[] features_header;
-    delete[] seeds_header;
-    delete[] new_seeds;
-}
+    // compute distance manually
+    double dist_manual = 0.0;
+    for (uint32_t i = 0; i < size; i++) {
+        dist_manual += (p1[i] - p2[i]) * (p1[i] - p2[i]);
+    }
+    dist_manual = sqrt(dist_manual);
 
-TEST(IFT, WriteArray) {
-    const char* features_filename = "../../test.npy";
+    // check if the two distances are equal
+    EXPECT_NEAR(dist_euclidean, dist_manual, 1e-6);
 
-    long *shape = new long[3];
-    shape[0] = 1024;
-    shape[1] = 1024;
-    shape[2] = 64;
-    size_t n_dims = 2;
-
-    ift_numpy_header *features_header = iftCreateNumPyHeader(
-        IFT_FLT_TYPE, 
-        shape,
-        n_dims);
-
-    float *features = new float[1024*1024*64];
-
-    iftWriteNumPy(features_header, features, features_filename);
 }
 
 TEST(IFT, neighbors) {
@@ -86,46 +52,49 @@ TEST(IFT, neighbors) {
 }
 
 TEST(IFT, computeIFT) {
-    long *shape = new long[3];
-    shape[0] = 1024;
-    shape[1] = 1024;
-    shape[2] = 64;
-    size_t n_dims = 3;
+    uint64_t height = 256;
+    uint64_t width = 256;
+    uint64_t channels = 64;
+    uint64_t num_labels = 2;
+    uint64_t num_pixels = height * width;
 
-    ift_numpy_header *features_header = iftCreateNumPyHeader(
-        IFT_FLT_TYPE, 
-        shape,
-        n_dims);
 
-    ift_numpy_header *seeds_header = iftCreateNumPyHeader(
-        IFT_LONG_TYPE,
-        shape,
-        2);
+    mt19937 rng;
+    uniform_real_distribution<float> features_dist(0.0, 100.0);
+    normal_distribution<float> noise_dist(0.0, 1.0);
+    uniform_real_distribution<float> certainty_dist(0.5, 1.0);
+    bernoulli_distribution seeds_dist(0.05);
+    bernoulli_distribution labels_dist(0.25);
 
-    ift_numpy_header *opf_certainty_header = iftCreateNumPyHeader(
-        IFT_FLT_TYPE,
-        shape,
-        2);
 
-    void *features_data = iftReadNumPy("../../features_ift.npy", &features_header);
-    void* seeds_data = iftReadNumPy("../../labels_to_ift.npy", &seeds_header);
-    void* opf_certainty_data = iftReadNumPy("../../opf_certainty.npy", &opf_certainty_header);
+    float *features = new float[num_pixels * channels];
+    uint64_t *seeds = new uint64_t[num_pixels];
+    float *opf_certainty = new float[num_pixels];
 
-    float *features = (float*)features_data;
-    uint64_t *seeds = (uint64_t*)seeds_data;
-    float *opf_certainty = (float*)opf_certainty_data;
+    // populate features
+    for (uint64_t i = 0; i < num_pixels; i++) {
+        for (uint64_t j = 0; j < channels; j++) {
+            features[i * channels + j] = features_dist(rng) + noise_dist(rng);
+        }
+    }
 
-    uint32_t height = shape[0];
-    uint32_t width = shape[1];
-    uint64_t n_features = shape[2];
-    uint64_t n_nodes = height * width;
+    // populate seeds
+    for (uint64_t i = 0; i < num_pixels; i++) {
+        bool is_seed = seeds_dist(rng);
+        seeds[i] = is_seed ? (uint64_t)labels_dist(rng) + 1 : 0;
+    }
 
-    uint64_t *pred_out = new uint64_t[n_nodes];
-    uint64_t *root_out = new uint64_t[n_nodes];
-    double *cost_out = new double[n_nodes];
-    bool *visited_out = new bool[n_nodes];
+    // populate opf_certainty
+    for (uint64_t i = 0; i < num_pixels; i++) {
+        opf_certainty[i] = certainty_dist(rng);
+    }
 
-    for (uint64_t i = 0; i < n_nodes; i++) {
+    uint64_t *pred_out = new uint64_t[num_pixels];
+    uint64_t *root_out = new uint64_t[num_pixels];
+    double *cost_out = new double[num_pixels];
+    bool *visited_out = new bool[num_pixels];
+
+    for (uint64_t i = 0; i < num_pixels; i++) {
         visited_out[i] = false;
     }
 
@@ -134,15 +103,15 @@ TEST(IFT, computeIFT) {
                 width,
                 seeds,
                 opf_certainty,
-                n_nodes,
-                n_features,
+                num_pixels,
+                channels,
                 pred_out,
                 root_out,
                 cost_out,
                 visited_out);
     
-    uint64_t *labels_from_ift = new uint64_t[n_nodes];
-    for (uint64_t i = 0; i < n_nodes; i++) {
+    uint64_t *labels_from_ift = new uint64_t[num_pixels];
+    for (uint64_t i = 0; i < num_pixels; i++) {
         ASSERT_TRUE(visited_out[i]);
         ASSERT_TRUE(cost_out[i] < numeric_limits<double>::max());
         /*if (seeds[i] != 0) {
@@ -165,54 +134,22 @@ TEST(IFT, computeIFT) {
         labels_from_ift,
         root_out,
         features,
-        n_features);
+        channels);
 
     // test if certainty is greater than zero
-    for (uint64_t i = 0; i < n_nodes; i++) {
-        ASSERT_TRUE(certainty[i] > 0.0);
+    for (uint64_t i = 0; i < num_pixels; i++) {
+        ASSERT_TRUE(certainty[i] >= 0.5);
     }
 
-    ift_numpy_header *certainty_header = iftCreateNumPyHeader(
-        IFT_DBL_TYPE,
-        shape,
-        2);
-
-    ift_numpy_header *pred_header = iftCreateNumPyHeader(
-        IFT_ULONG_TYPE,
-        shape,
-        2);
-
-    ift_numpy_header *root_header = iftCreateNumPyHeader(
-        IFT_ULONG_TYPE,
-        shape,
-        2);
-
-    ift_numpy_header *labels_header = iftCreateNumPyHeader(
-        IFT_ULONG_TYPE,
-        shape,
-        2);
-    
-
-    iftWriteNumPy(certainty_header, certainty, "../../certainty_ift_2.npy");
-    iftWriteNumPy(pred_header, pred_out, "../../pred_ift_2.npy");
-    iftWriteNumPy(root_header, root_out, "../../root_ift_2.npy");
-    iftWriteNumPy(labels_header, labels_from_ift, "../../labels_from_ift_2.npy");
-
     delete[] certainty;
-    delete[] certainty_header;
-    delete[] pred_header;
-    delete[] root_header;
     delete[] pred_out;
     delete[] root_out;
     delete[] cost_out;
     delete[] visited_out;
-    delete[] features_header;
-    delete[] seeds_header;
     delete[] features;
     delete[] opf_certainty;
     delete[] seeds;
     delete[] labels_from_ift;
-    delete[] shape;
-}
 
+}
      

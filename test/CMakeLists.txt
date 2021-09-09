@@ -15,13 +15,11 @@ target_link_libraries(lp_test PRIVATE label_propagation)
 
 find_package(OpenMP REQUIRED)
 
-find_package(IFT REQUIRED)
 target_include_directories(lp_test PRIVATE ${IFT_INCLUDE_DIRS})
 
 target_link_libraries(lp_test PRIVATE
 OpenMP::OpenMP_CXX
 gtest_main
-${IFT_LIBRARY}
 )
 
 # Defines `gtest_discover_tests()`.

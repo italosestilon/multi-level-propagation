@@ -17,10 +17,10 @@ std::vector<float> linspace(float start, float end, size_t N) {
 
 }
 
-inline double euclidean_distance(const float *v1, const float *v2, unsigned long int dims) {
+double euclidean_distance(const float *v1, const float *v2, uint64_t dims) {
     double sum = 0.0f;
-    #pragma omp parallel for reduction(+:sum)
-    for (unsigned long int i = 0; i < dims; i++) {
+    //#pragma omp parallel for reduction(+:sum)
+    for (uint64_t i = 0; i < dims; i++) {
         sum += (v1[i] - v2[i]) * (v1[i] - v2[i]);
     }
     return sqrt(sum);
