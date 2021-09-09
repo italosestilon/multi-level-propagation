@@ -33,3 +33,10 @@
 
 # Build
 build/
+
+# Data files
+*.npy
+
+# VS Code
+.vscode/settings.json
+
