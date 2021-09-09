@@ -1,19 +1,10 @@
-#include <cmath>
 #include <limits>
 #include <vector>
 #include <label_propagation/ift.h>
 #include <label_propagation/priority_queue.h>
+#include <label_propagation/utils.h>
 
 using namespace std;
-
-inline double euclidean_distance(const float *v1, const float *v2, unsigned long int dims) {
-    double sum = 0.0f;
-    #pragma omp parallel for reduction(+:sum)
-    for (unsigned long int i = 0; i < dims; i++) {
-        sum += (v1[i] - v2[i]) * (v1[i] - v2[i]);
-    }
-    return sqrt(sum);
-}
 
 // function to compute neihborhood of a pixel
 vector<uint64_t> neighborhood(uint64_t pixel, uint64_t height, uint64_t width, uint32_t rad) {
