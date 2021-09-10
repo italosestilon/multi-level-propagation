@@ -138,3 +138,19 @@ double *compute_certainty(uint32_t height,
 
     return certainty;
 }
+
+uint64_t *propagate_labels(uint32_t height,
+                           uint32_t width,
+                           const uint64_t *seeds,
+                           const uint64_t *root) {
+    
+    uint64_t *labels = new uint64_t[height * width];
+
+    #pragma omp parallel for
+    for (uint64_t i = 0; i < height * width; i++) {
+        labels[i] = seeds[root[i]];
+    }
+
+    return labels;
+
+}

@@ -17,6 +17,11 @@ void compute_itf(const float *features,
                  double *cost_out,
                  bool *visited_out);
 
+uint64_t *propagate_labels(uint32_t height,
+                           uint32_t width,
+                           const uint64_t *seeds,
+                           const uint64_t *root);
+
 double *compute_certainty(uint32_t height,
                           uint32_t width,
                           double *cost,
