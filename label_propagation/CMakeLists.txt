@@ -14,7 +14,7 @@ set(HEADERS ${HEADERS} PARENT_SCOPE)
 
 message(STATUS "HEADERS " ${HEADERS})
 
-add_library(label_propagation ${SRC})
+add_library(label_propagation SHARED ${SRC})
 target_include_directories(label_propagation PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>)
 
 find_package(OpenMP REQUIRED)

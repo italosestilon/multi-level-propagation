@@ -11,6 +11,7 @@ enable_testing()
 
 add_subdirectory(label_propagation)
 add_subdirectory(test)
+add_subdirectory(python)
 
 # add_library(label-propagation label-propagation.cpp)
 
