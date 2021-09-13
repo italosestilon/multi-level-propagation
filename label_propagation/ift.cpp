@@ -42,8 +42,7 @@ void compute_itf(const float *features,
                 uint64_t n_features,
                 uint64_t *pred_out,
                 uint64_t *root_out,
-                double *cost_out,
-                bool *visited_out) {
+                double *cost_out) {
 
     PairPQ pq = PairPQ(n_nodes);
 
@@ -69,8 +68,6 @@ void compute_itf(const float *features,
 
    while (!pq.empty()) {
        pif first = pq.pop();
-
-       visited_out[first.first] = true;
 
        auto neighbors = neighborhood(first.first, height, width, 9);
 

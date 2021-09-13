@@ -92,11 +92,6 @@ TEST(IFT, computeIFT) {
     uint64_t *pred_out = new uint64_t[num_pixels];
     uint64_t *root_out = new uint64_t[num_pixels];
     double *cost_out = new double[num_pixels];
-    bool *visited_out = new bool[num_pixels];
-
-    for (uint64_t i = 0; i < num_pixels; i++) {
-        visited_out[i] = false;
-    }
 
     compute_itf(features,
                 height,
@@ -107,12 +102,10 @@ TEST(IFT, computeIFT) {
                 channels,
                 pred_out,
                 root_out,
-                cost_out,
-                visited_out);
+                cost_out);
     
     uint64_t *labels_from_ift = new uint64_t[num_pixels];
     for (uint64_t i = 0; i < num_pixels; i++) {
-        ASSERT_TRUE(visited_out[i]);
         ASSERT_TRUE(cost_out[i] < numeric_limits<double>::max());
         /*if (seeds[i] != 0) {
             ASSERT_TRUE(cost_out[i] == 0.0);
@@ -145,7 +138,6 @@ TEST(IFT, computeIFT) {
     delete[] pred_out;
     delete[] root_out;
     delete[] cost_out;
-    delete[] visited_out;
     delete[] features;
     delete[] opf_certainty;
     delete[] seeds;

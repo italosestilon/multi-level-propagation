@@ -1,3 +1,3 @@
 # pragma once
 
-#include "ift.h"
+#include <label_propagation/ift.h>
