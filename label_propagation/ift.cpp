@@ -54,7 +54,7 @@ void compute_itf(const float *features,
            root_out[i] = i;
            cost_out[i] = 0;
            if (opf_certainty) {
-               cost_out[i] = 1 - opf_certainty[i];
+               cost_out[i] = 1.0 - opf_certainty[i];
            }
        } else {
            pred_out[i] = i;
@@ -69,7 +69,7 @@ void compute_itf(const float *features,
    while (!pq.empty()) {
        pif first = pq.pop();
 
-       auto neighbors = neighborhood(first.first, height, width, 9);
+       auto neighbors = neighborhood(first.first, height, width, 3);
 
        double dist;
        double cost;
@@ -107,7 +107,7 @@ double *compute_certainty(uint32_t height,
     double *certainty = new double[height * width];
     // # pragma omp parallel for
     for (uint64_t i = 0; i < height * width; i++) {
-        auto neighbors = neighborhood(i, height, width, 9);
+        auto neighbors = neighborhood(i, height, width, 3);
         double min_cost = std::numeric_limits<double>::max();
         // if it is a seed, set certainty to 1
         if (root[i] == i) {

@@ -18,10 +18,9 @@ def compute_itf(features, seeds, opf_certainty=None):
 
     if opf_certainty is not None:
         opf_certainty = _np.ascontiguousarray(opf_certainty, dtype=_np.float32)
-        opf_certainty_view = opf_certainty
+        opf_certainty_view = opf_certainty.flatten()
         opf_certainty_ptr = &opf_certainty_view[0]
 
-    
     shape = features.shape
     height = shape[0]
     width = shape[1]
@@ -65,7 +64,7 @@ def compute_itf(features, seeds, opf_certainty=None):
     cdef uint64_t[:, ::1] labels_view = <uint64_t[:height, :width:1]> labels_ptr
     cdef double[:, ::1] certainty_view = <double[:height, :width:1]> certainty_ptr
 
-    labels = _np.asarry(labels_view, dtype=_np.uint64)
+    labels = _np.asarray(labels_view, dtype=_np.uint64)
     certainty = _np.asarray(certainty_view, dtype=_np.float64)
 
     return labels, certainty, pred_out, root_out, cost_out
