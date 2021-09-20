@@ -1,5 +1,3 @@
-#include <gtest/gtest.h>
-
 #include <label_propagation/ift.h>
 #include <label_propagation/utils.h>
 
@@ -9,49 +7,7 @@
 
 #include <random>
 
-using namespace std;
-
-TEST(IFT, euclidean_distance) {
-    // generate two random points as arrays
-    const uint32_t size = 64;
-    float *p1 = new float[size];
-    float *p2 = new float[size];
-
-    mt19937 rng;
-    uniform_real_distribution<float> dist(-1.0, 1.0);
-    // populate with random values
-    for (uint32_t i = 0; i < size; i++) {
-        p1[i] = dist(rng);
-        p2[i] = dist(rng);
-    }
-
-    // compute distance
-    double dist_euclidean = euclidean_distance(p1, p2, size);
-
-    // compute distance manually
-    double dist_manual = 0.0;
-    for (uint32_t i = 0; i < size; i++) {
-        dist_manual += (p1[i] - p2[i]) * (p1[i] - p2[i]);
-    }
-    dist_manual = sqrt(dist_manual);
-
-    // check if the two distances are equal
-    EXPECT_NEAR(dist_euclidean, dist_manual, 1e-6);
-
-}
-
-TEST(IFT, neighbors) {
-    vector<uint64_t> neighbors = neighborhood(0, 1024, 1024);
-    ASSERT_EQ(neighbors.size(), 3);
-
-    neighbors = neighborhood(5, 1024, 1024);
-    ASSERT_EQ(neighbors.size(), 5);
-
-    neighbors = neighborhood(6248, 1024, 1024);
-    ASSERT_EQ(neighbors.size(), 8);
-}
-
-TEST(IFT, computeIFT) {
+int main() {
     uint64_t height = 512;
     uint64_t width = 512;
     uint64_t channels = 64;
@@ -105,20 +61,6 @@ TEST(IFT, computeIFT) {
                 cost_out);
     
     uint64_t *labels_from_ift = new uint64_t[num_pixels];
-    for (uint64_t i = 0; i < num_pixels; i++) {
-        ASSERT_TRUE(cost_out[i] < numeric_limits<double>::max());
-        /*if (seeds[i] != 0) {
-            ASSERT_TRUE(cost_out[i] == 0.0);
-            ASSERT_TRUE(pred_out[i] == i);
-            ASSERT_TRUE(root_out[i] == i);
-        } else {
-            ASSERT_TRUE(pred_out[i] != i);
-            ASSERT_TRUE(root_out[i] != i);
-        }*/
-        
-        labels_from_ift[i] = seeds[root_out[i]];
-
-    }
 
     double *certainty = compute_certainty(
         height,
@@ -129,12 +71,7 @@ TEST(IFT, computeIFT) {
         features,
         channels,
         3);
-
-    // test if certainty is greater than zero
-    for (uint64_t i = 0; i < num_pixels; i++) {
-        ASSERT_TRUE(certainty[i] >= 0.5);
-    }
-
+    
     delete[] certainty;
     delete[] pred_out;
     delete[] root_out;
@@ -143,6 +80,5 @@ TEST(IFT, computeIFT) {
     delete[] opf_certainty;
     delete[] seeds;
     delete[] labels_from_ift;
-
+    return 0;
 }
-     

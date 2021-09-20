@@ -8,7 +8,7 @@ import numpy as _np
 
 cimport label_propagation.label_propagation as clp
 
-def compute_itf(features, seeds, opf_certainty=None):
+def compute_itf(features, seeds, neighborhood_size=3, opf_certainty=None):
 
     features = _np.ascontiguousarray(features, dtype=_np.float32)
     seeds = _np.ascontiguousarray(seeds, dtype=_np.uint64)
@@ -44,6 +44,7 @@ def compute_itf(features, seeds, opf_certainty=None):
                 opf_certainty_ptr,
                 height * width,
                 channels,
+                neighborhood_size,
                 &pred_out_view[0],
                 &root_out_view[0],
                 &cost_out_view[0])
@@ -59,7 +60,8 @@ def compute_itf(features, seeds, opf_certainty=None):
                                             labels_ptr,
                                             &root_out_view[0],
                                             &features_view[0],
-                                            channels)
+                                            channels,
+                                            neighborhood_size)
 
     cdef uint64_t[:, ::1] labels_view = <uint64_t[:height, :width:1]> labels_ptr
     cdef double[:, ::1] certainty_view = <double[:height, :width:1]> certainty_ptr

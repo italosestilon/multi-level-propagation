@@ -3,7 +3,12 @@ set(TEST_SRC
   test_pq.cpp
   test_ift.cpp)
 
+set(MAIN_SRC
+    test_ift_performance.cpp)
+
 add_executable(lp_test ${TEST_SRC})
+
+add_executable(perf_test ${MAIN_SRC})
 
 include(FetchContent)
 FetchContent_Declare(googletest
@@ -12,6 +17,7 @@ FetchContent_Declare(googletest
 FetchContent_MakeAvailable(googletest)
 
 target_link_libraries(lp_test PRIVATE label_propagation)
+target_link_libraries(perf_test PRIVATE label_propagation OpenMP::OpenMP_CXX)
 
 find_package(OpenMP REQUIRED)
 
