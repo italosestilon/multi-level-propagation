@@ -8,6 +8,7 @@ cdef extern from "<label_propagation/ift.h>":
                 float* opf_certainty,
                 uint64_t n_nodes,
                 uint64_t n_features,
+                uint32_t neighborhood_size,
                 uint64_t *pred_out,
                 uint64_t *root_out,
                 double *cost_out)
@@ -23,4 +24,5 @@ cdef extern from "<label_propagation/ift.h>":
                         uint64_t *labels,
                         uint64_t *root,
                         float *features,
-                        uint64_t n_features)
+                        uint64_t n_features,
+                        uint32_t neighborhood_size)
