@@ -20,9 +20,6 @@ set_target_properties(label_propagation
 find_package(OpenMP REQUIRED)
 find_package(BLAS REQUIRED)
 
-message(STATUS "Building label_propagation")
-message(STATUS "BLAS : ${BLAS_LIBRARIES}")
-
 target_link_libraries(label_propagation PRIVATE ${BLAS_LIBRARIES} OpenMP::OpenMP_CXX)
 
 install(TARGETS label_propagation
