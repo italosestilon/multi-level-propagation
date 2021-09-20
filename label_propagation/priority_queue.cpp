@@ -33,8 +33,6 @@ void PairPQ::push(pif p) {
     if (size_ == capacity_) {
         capacity_ *= 2;
         pif *new_pq = new pif[capacity_];
-        uli *new_index = new uli[capacity_];
-
         memcpy(pq_, new_pq, sizeof(pif) * size_);
         
         delete[] pq_;
@@ -58,7 +56,6 @@ void PairPQ::swap(uli i, uli j) {
     pif temp = pq_[i];
     pq_[i] = pq_[j];
     pq_[j] = temp;
-    uli temp_index = index_[i];
     index_[temp.first] = j;
     index_[pq_[i].first] = i;
 }

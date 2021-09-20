@@ -12,11 +12,19 @@ set(HEADERS
 
 set(HEADERS ${HEADERS} PARENT_SCOPE)
 
-message(STATUS "HEADERS " ${HEADERS})
-
-add_library(label_propagation ${SRC})
+add_library(label_propagation SHARED ${SRC})
 target_include_directories(label_propagation PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>)
+set_target_properties(label_propagation
+                      PROPERTIES PUBLIC_HEADER ${PROJECT_SOURCE_DIR}/label_propagation/ift.h)
 
 find_package(OpenMP REQUIRED)
-target_link_libraries(label_propagation PRIVATE OpenMP::OpenMP_CXX)
-target_include_directories(label_propagation PRIVATE ${IFT_INCLUDE_DIRS})
+find_package(BLAS REQUIRED)
+
+message(STATUS "Building label_propagation")
+message(STATUS "BLAS : ${BLAS_LIBRARIES}")
+
+target_link_libraries(label_propagation PRIVATE ${BLAS_LIBRARIES} OpenMP::OpenMP_CXX)
+
+install(TARGETS label_propagation
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/label_propagation)

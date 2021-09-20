@@ -1,0 +1,23 @@
+from Cython.Build.Dependencies import package
+from setuptools import setup
+from Cython.Build import cythonize
+from Cython.Distutils import build_ext
+from distutils.extension import Extension
+
+ext_modules = [
+    Extension(
+        name="label_propagation",
+        sources=["${CMAKE_SOURCE_DIR}/python/label_propagation/label_propagation.pyx"],
+        include_dirs=["${CMAKE_SOURCE_DIR}"],
+        libraries=["label_propagation"],
+        library_dirs=["${CMAKE_BINARY_DIR}/label_propagation"],
+        language="c++"
+    )
+]
+
+setup(
+    name="label_propagation",
+    cmdclass={"build_ext": build_ext},
+    ext_modules=(ext_modules),
+    package_dir={"label_propagation": "${CMAKE_CURRENT_SOURCE_DIR}/label_propagation"},
+)

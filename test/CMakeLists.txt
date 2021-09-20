@@ -3,7 +3,12 @@ set(TEST_SRC
   test_pq.cpp
   test_ift.cpp)
 
+set(MAIN_SRC
+    test_ift_performance.cpp)
+
 add_executable(lp_test ${TEST_SRC})
+
+add_executable(perf_test ${MAIN_SRC})
 
 include(FetchContent)
 FetchContent_Declare(googletest
@@ -11,13 +16,16 @@ FetchContent_Declare(googletest
 
 FetchContent_MakeAvailable(googletest)
 
-target_link_libraries(lp_test PRIVATE label_propagation)
-
 find_package(OpenMP REQUIRED)
+find_package(BLAS REQUIRED)
+
+target_link_libraries(perf_test PRIVATE label_propagation ${BLAS_LIBRARIES} OpenMP::OpenMP_CXX)
 
 target_include_directories(lp_test PRIVATE ${IFT_INCLUDE_DIRS})
 
 target_link_libraries(lp_test PRIVATE
+label_propagation
+${BLAS_LIBRARIES}
 OpenMP::OpenMP_CXX
 gtest_main
 )
