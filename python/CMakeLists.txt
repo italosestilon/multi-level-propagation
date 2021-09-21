@@ -1,5 +1,9 @@
-set(PYTHON ${PYTHON_ROOT}/bin/python)
+set(PYTHON ${PYTHON_ROOT}/bin/python3)
 message(STATUS ${PYTHON})
+
+# install cython
+execute_process(COMMAND ${PYTHON} -m pip install cython)
+
 if (PYTHON)
    set (SETUP_PY_IN ${CMAKE_CURRENT_SOURCE_DIR}/setup.py.in)
    set (SETUP_PY ${CMAKE_CURRENT_BINARY_DIR}/setup.py)
