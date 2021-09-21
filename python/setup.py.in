@@ -17,7 +17,9 @@ ext_modules = [
 
 setup(
     name="label_propagation",
+    version="${PROJECT_VERSION}",
     cmdclass={"build_ext": build_ext},
+    install_requires=['numpy>=1.20'],
     ext_modules=(ext_modules),
     package_dir={"label_propagation": "${CMAKE_CURRENT_SOURCE_DIR}/label_propagation"},
 )
