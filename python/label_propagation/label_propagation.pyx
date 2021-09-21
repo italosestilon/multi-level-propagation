@@ -1,3 +1,4 @@
+# cython: language_level=3
 from libc.stdlib cimport malloc, free
 from libc.stdint cimport uint64_t, uint32_t
 
