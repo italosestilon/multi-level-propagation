@@ -30,5 +30,3 @@ double *compute_certainty(uint32_t height,
                           float *features,
                           uint64_t n_features,
                           uint32_t neighborhood_size);
-
-vector<uint64_t> neighborhood(uint64_t pixel, uint64_t height, uint64_t width, uint32_t rad=3);

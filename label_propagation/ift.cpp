@@ -5,33 +5,6 @@
 #include <label_propagation/utils.h>
 
 using namespace std;
-
-// function to compute neihborhood of a pixel
-vector<uint64_t> neighborhood(uint64_t pixel, uint64_t height, uint64_t width, uint32_t rad) {
-    // unravel pixel index
-    uint64_t x = pixel / width;
-    uint64_t y = pixel % width;
-
-    int32_t start = -(rad / 2);
-    int32_t end = rad / 2;
-
-    // compute neihborhood
-    vector<uint64_t> neighbors;
-    for (int64_t i = start; i <= end; i++) {
-        for (int64_t j = start; j <= end; j++) {
-            if (i == 0 && j == 0) continue;
-            // check if neihbor is in image
-            if (x + i < width && y + j < height) {
-                // add neihbor to neihborhood
-                uint64_t neighbor = (x + i) * width + (y + j);
-                neighbors.push_back(neighbor);
-            }
-        }
-    }
-
-    return neighbors;
-}
-
 void compute_itf(const float *features,
                 uint32_t height,
                 uint32_t width,
