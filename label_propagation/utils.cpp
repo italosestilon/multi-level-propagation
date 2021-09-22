@@ -85,21 +85,23 @@ unordered_map<uint32_t, pos> geodesic_centers(uint32_t *labels,
 
     for (uint64_t i = 0; i < height * width; i++) {
         distance[i] = numeric_limits<float>::max();
-        vector<uint64_t> neighbors = neighborhood(i, height, width, 2.0);
-        if (neighbors.size() < 8) {
-            root[i] = i;
-            distance[i] = 0.0;
-            pq.push(make_pair(distance[i], i));
-            
-        } else {
-            for (uint64_t j = 0; j < neighbors.size(); j++) {
-                uint64_t neighbor = neighbors[j];
-                uint32_t label = labels[neighbor];
-                if (label != labels[i]) {
-                    distance[i] = 0.0;
-                    root[i] = i;
-                    pq.push(make_pair(i, 0.0));
-                    break;
+        if (labels[i] != 0) {
+            vector<uint64_t> neighbors = neighborhood(i, height, width, 2.0);
+            if (neighbors.size() < 8) {
+                root[i] = i;
+                distance[i] = 0.0;
+                pq.push(make_pair(distance[i], i));
+                
+            } else {
+                for (uint64_t j = 0; j < neighbors.size(); j++) {
+                    uint64_t neighbor = neighbors[j];
+                    uint32_t label = labels[neighbor];
+                    if (label != labels[i]) {
+                        distance[i] = 0.0;
+                        root[i] = i;
+                        pq.push(make_pair(i, 0.0));
+                        break;
+                    }
                 }
             }
         }
@@ -115,48 +117,51 @@ unordered_map<uint32_t, pos> geodesic_centers(uint32_t *labels,
 
         for(uint64_t i = 0; i < neighbors.size(); i++) {
             uint64_t neighbor = neighbors[i];
-            if (distance[neighbor] > dist && labels[neighbor] == labels[pixel]) {
-                // unravel pixel index
-                int64_t p_x = neighbor / width;
-                int64_t p_y = neighbor % width;
+            if (labels[neighbor] != 0) {
+                if (distance[neighbor] > dist && labels[neighbor] == labels[pixel]) {
+                    // unravel root pixel index
+                    int64_t p_x = root[pixel] / width;
+                    int64_t p_y = root[pixel] % width;
 
-                // unravel neighbor index
-                int64_t n_x = pixel / width;
-                int64_t n_y = pixel % width;
+                    // unravel neighbor index
+                    int64_t n_x = neighbor / width;
+                    int64_t n_y = neighbor % width;
 
-                // compute distance with double precision
-                double d = sqrt((p_x - n_x) * (p_x - n_x) + (p_y - n_y) * (p_y - n_y));
+                    // compute distance with double precision
+                    double d = sqrt((p_x - n_x) * (p_x - n_x) + (p_y - n_y) * (p_y - n_y));
 
-                if (d < distance[neighbor]) {
-                    if (distance[neighbor] != numeric_limits<float>::max()) {
-                        // decrease key
-                        uint64_t index = pq.get_index(neighbor);
-                        pq.decrease_key(index, d);
-                    } else {
-                        // insert key
-                        pq.push(make_pair(neighbor, d));
+                    if (d < distance[neighbor]) {
+                        if (distance[neighbor] != numeric_limits<float>::max()) {
+                            // decrease key
+                            uint64_t index = pq.get_index(neighbor);
+                            pq.update(index, d);
+                        } else {
+                            // insert key
+                            pq.push(make_pair(neighbor, d));
+                        }
+
+                        distance[neighbor] = d;
+                        root[neighbor] = root[pixel];
                     }
 
-                    distance[neighbor] = d;
-                    root[neighbor] = pixel;
                 }
-
             }
         }
-
     }
 
     // compute geodesic centers
     for (uint64_t i = 0; i < height * width; i++) {
         uint32_t label = labels[i];
-        if (centers.find(label) == centers.end()) {
-            centers[label] = unravel_index(i, height, width);
-        } else {
-            pos center = centers[label];
-            uint64_t center_index = center.first * width + center.second;
-
-            if (distance[i] > distance[center_index]) {
+        if (label != 0) {
+            if (centers.find(label) == centers.end()) {
                 centers[label] = unravel_index(i, height, width);
+            } else {
+                pos center = centers[label];
+                uint64_t center_index = center.first * width + center.second;
+
+                if (distance[i] > distance[center_index]) {
+                    centers[label] = unravel_index(i, height, width);
+                }
             }
         }
     }

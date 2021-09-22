@@ -76,6 +76,22 @@ void PairPQ::heapify(uli i) {
     }
 }
 
+void PairPQ::update(uli index, double key) {
+    double old_key = pq_[index].second;
+
+    if (old_key < key) {
+        increase_key(index, key);
+    } else {
+        decrease_key(index, key);
+    }    
+}
+
+// incrase the value of the key in min heap
+void PairPQ::increase_key(uli index, double key) {
+    pq_[index].second = key;
+    heapify(index);
+}
+
 void PairPQ::decrease_key(uli index, double key) {
     pq_[index].second = key;
     uli i = index;

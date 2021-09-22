@@ -1,7 +1,8 @@
 set(TEST_SRC 
   test_linspace_vector_gen.cpp
   test_pq.cpp
-  test_ift.cpp)
+  test_ift.cpp
+  test_geodesic_centers.cpp)
 
 set(MAIN_SRC
     test_ift_performance.cpp)

@@ -18,7 +18,9 @@ public:
     pif pop();
     bool empty();
     uli size();
+    void update(uli index, double key);
     void decrease_key(uli index, double key);
+    void increase_key(uli index, double key);
     uli get_index(uli key);
 
 private:

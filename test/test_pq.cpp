@@ -58,3 +58,19 @@ TEST(PriorityQueue, DecreaseKey) {
     EXPECT_EQ(top.second, 0.5);
     EXPECT_EQ(pq.get_index(3), 0);
 }
+
+// test increase key
+TEST(PriorityQueue, IncreaseKey) {
+    PairPQ pq = PairPQ(10);
+    pq.push(make_pair(1, 1.0));
+    pq.push(make_pair(3, 1.5));
+    pq.push(make_pair(2, 2.0));
+    pq.push(make_pair(4, 2.1));
+    pq.push(make_pair(5, 2.2));
+
+    uli idx = pq.get_index(3);
+    pq.increase_key(idx, 3.0);
+
+    EXPECT_EQ(pq.get_index(3), 3);
+
+}
