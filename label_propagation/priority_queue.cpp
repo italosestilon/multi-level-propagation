@@ -33,7 +33,12 @@ void PairPQ::push(pif p) {
     if (size_ == capacity_) {
         capacity_ *= 2;
         pif *new_pq = new pif[capacity_];
-        memcpy(pq_, new_pq, sizeof(pif) * size_);
+        // memcpy(pq_, new_pq, sizeof(pif) * size_);
+
+        // copy to new array
+        for (uli i = 0; i < size_; i++) {
+            new_pq[i] = make_pair(pq_[i].first, pq_[i].second);
+        }
         
         delete[] pq_;
 
