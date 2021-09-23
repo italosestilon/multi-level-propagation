@@ -62,7 +62,7 @@ double euclidean_distance(const float *v1, const float *v2, uint64_t dims) {
 }
 
 // function to unravel index
-inline pair<uint32_t, uint32_t> unravel_index(uint64_t index, uint32_t height, uint32_t width) {
+inline pair<uint32_t, uint32_t> unravel_index(uint64_t index, uint32_t width) {
     uint32_t x = index / width;
     uint32_t y = index % width;
     return make_pair(x, y);
@@ -71,9 +71,7 @@ inline pair<uint32_t, uint32_t> unravel_index(uint64_t index, uint32_t height, u
 
 unordered_map<uint32_t, pos> geodesic_centers(uint32_t *labels,
                                               uint32_t height,
-                                              uint32_t width,
-                                              uint32_t num_labels) {
-    
+                                              uint32_t width) {
     // create map to store centers
     unordered_map<uint32_t, pos> centers;
 
@@ -154,13 +152,13 @@ unordered_map<uint32_t, pos> geodesic_centers(uint32_t *labels,
         uint32_t label = labels[i];
         if (label != 0) {
             if (centers.find(label) == centers.end()) {
-                centers[label] = unravel_index(i, height, width);
+                centers[label] = unravel_index(i, width);
             } else {
                 pos center = centers[label];
                 uint64_t center_index = center.first * width + center.second;
 
                 if (distance[i] > distance[center_index]) {
-                    centers[label] = unravel_index(i, height, width);
+                    centers[label] = unravel_index(i, width);
                 }
             }
         }

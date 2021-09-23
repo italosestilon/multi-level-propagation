@@ -4,6 +4,8 @@ project(label-propagation VERSION 0.1.0
 
 set(CMAKE_CXX_STANDARD 11)
 
+add_compile_options(-Wall -Wextra -pedantic -Werror)
+
 message(STATUS "CXX_STANDARD: ${CMAKE_CXX_STANDARD}")
 message(STATUS "CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
 message(STATUS "CMAKE_CXX_COMPILER: ${CMAKE_CXX_COMPILER}")

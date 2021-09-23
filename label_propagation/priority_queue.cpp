@@ -108,3 +108,7 @@ uli PairPQ::get_index(uli key) {
 bool PairPQ::empty() {
     return size_ == 0;
 }
+
+uint64_t PairPQ::size() {
+    return size_;
+}

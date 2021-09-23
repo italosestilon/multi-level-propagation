@@ -9,7 +9,6 @@ using namespace std;
 TEST(GeodesicCenters, FindCenters) {
     uint32_t height = 20;
     uint32_t width = 20;
-    uint32_t num_labels = 1;
 
     uint32_t *label_image = new uint32_t[height * width];
 
@@ -28,8 +27,7 @@ TEST(GeodesicCenters, FindCenters) {
     // compute square center
     unordered_map<uint32_t, pos> centers = geodesic_centers(label_image,
                                                 height,
-                                                width,
-                                                num_labels);
+                                                width);
 
     
     EXPECT_EQ(centers.size(), 1);
