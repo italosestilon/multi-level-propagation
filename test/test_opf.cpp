@@ -106,7 +106,8 @@ TEST(OPFTest, Train) {
         EXPECT_GE(test_certainty[i], 0.5);
         EXPECT_LE(test_certainty[i], 1.0);
     }
-
+    
+    delete graph;
     delete[] features;
     delete[] labels;
     delete[] is_supervised;

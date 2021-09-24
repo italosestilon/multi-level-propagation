@@ -111,6 +111,8 @@ public:
         delete[] path_value;
         delete[] ordered_nodes;
         delete[] labels;
+        delete[] supervised;
+        delete[] weight;
     }
 
 private:

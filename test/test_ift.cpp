@@ -38,6 +38,9 @@ TEST(IFT, euclidean_distance) {
     // check if the two distances are equal
     EXPECT_NEAR(dist_euclidean, dist_manual, 1e-6);
 
+    delete[] p1;
+    delete[] p2;
+
 }
 
 TEST(IFT, neighbors) {

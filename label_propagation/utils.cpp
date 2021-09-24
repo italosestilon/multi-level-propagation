@@ -58,7 +58,6 @@ double euclidean_distance(const float *v1, const float *v2, uint64_t dims) {
     delete[] diff;
 
     return norm;
-
 }
 
 // function to unravel index
@@ -164,5 +163,8 @@ unordered_map<uint32_t, pos> geodesic_centers(uint32_t *labels,
         }
     }
 
+    delete[] distance;
+    delete[] root;
+    
     return centers;
 }

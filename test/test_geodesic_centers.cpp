@@ -29,8 +29,9 @@ TEST(GeodesicCenters, FindCenters) {
                                                 height,
                                                 width);
 
-    
     EXPECT_EQ(centers.size(), 1);
     EXPECT_EQ(centers[1].first, 6);
     EXPECT_EQ(centers[1].second, 6);
+
+    delete[] label_image;
 }

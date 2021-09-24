@@ -15,4 +15,6 @@ TEST(Util, linspace_vector_gen) {
     for (unsigned int i = 0; i < N; i++) {
         EXPECT_FLOAT_EQ(x[i], start + i * step);
     }
+
+    x.clear();
 }
