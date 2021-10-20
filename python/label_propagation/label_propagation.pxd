@@ -1,7 +1,7 @@
 from libc.stdint cimport uint64_t, uint32_t
 
 cdef extern from "<label_propagation/ift.h>":
-    void compute_itf(const float *features,
+    void compute_ift(const float *features,
                 uint32_t height,
                 uint32_t width,
                 const uint64_t *seeds,

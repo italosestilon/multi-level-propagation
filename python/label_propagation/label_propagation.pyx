@@ -1,6 +1,7 @@
 # cython: language_level=3
 from libc.stdlib cimport malloc, free
 from libc.stdint cimport uint64_t, uint32_t
+from libc.stdio cimport printf
 
 from libcpp cimport bool
 
@@ -9,18 +10,17 @@ import numpy as _np
 
 cimport label_propagation.label_propagation as clp
 
-def compute_itf(features, seeds, neighborhood_size=3, opf_certainty=None):
+def compute_ift(features, seeds, neighborhood_size=3, opf_certainty=None):
 
-    features = _np.ascontiguousarray(features, dtype=_np.float32)
-    seeds = _np.ascontiguousarray(seeds, dtype=_np.uint64)
+    features = _np.ascontiguousarray(features).astype(_np.float32)
+    seeds = _np.ascontiguousarray(seeds).astype(_np.uint64)
 
     cdef float *opf_certainty_ptr = NULL
     cdef float [::1] opf_certainty_view
 
     if opf_certainty is not None:
-        opf_certainty = _np.ascontiguousarray(opf_certainty, dtype=_np.float32)
+        opf_certainty = _np.ascontiguousarray(opf_certainty).astype(_np.float32)
         opf_certainty_view = opf_certainty.flatten()
-        opf_certainty_ptr = &opf_certainty_view[0]
 
     shape = features.shape
     height = shape[0]
@@ -38,11 +38,11 @@ def compute_itf(features, seeds, neighborhood_size=3, opf_certainty=None):
     cdef uint64_t [::1] root_out_view = root_out
     cdef double [::1] cost_out_view = cost_out
 
-    clp.compute_itf(&features_view[0],
+    clp.compute_ift(&features_view[0],
                 height,
                 width,
                 &seeds_view[0],
-                opf_certainty_ptr,
+                &opf_certainty_view[0],
                 height * width,
                 channels,
                 neighborhood_size,
@@ -50,10 +50,12 @@ def compute_itf(features, seeds, neighborhood_size=3, opf_certainty=None):
                 &root_out_view[0],
                 &cost_out_view[0])
 
+
     cdef uint64_t *labels_ptr = clp.propagate_labels(height,
                                             width,
                                             &seeds_view[0],
                                             &root_out_view[0])
+
                                             
     cdef double *certainty_ptr = clp.compute_certainty(height,
                                             width,
@@ -71,6 +73,5 @@ def compute_itf(features, seeds, neighborhood_size=3, opf_certainty=None):
     certainty = _np.asarray(certainty_view, dtype=_np.float64)
 
     return labels, certainty, pred_out, root_out, cost_out
-
 
 

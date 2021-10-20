@@ -5,7 +5,7 @@
 
 using namespace std;
 
-void compute_itf(const float *features,
+void compute_ift(const float *features,
                  uint32_t height,
                  uint32_t width,
                  const uint64_t *seeds,
