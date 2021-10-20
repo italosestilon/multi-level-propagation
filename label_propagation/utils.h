@@ -25,5 +25,4 @@ double euclidean_distance(const float *v1, const float *v2, uint64_t dims);
 
 unordered_map<uint32_t, pos> geodesic_centers(uint32_t *labels,
                                               uint32_t height,
-                                              uint32_t width,
-                                              uint32_t num_labels);
+                                              uint32_t width);

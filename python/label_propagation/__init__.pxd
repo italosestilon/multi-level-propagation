@@ -1,1 +1,1 @@
-from label_propagation.label_propagation cimport compute_itf
+from label_propagation.label_propagation cimport compute_ift

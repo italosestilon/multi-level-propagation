@@ -9,7 +9,7 @@ ext_modules = [
         name="label_propagation",
         sources=["${CMAKE_SOURCE_DIR}/python/label_propagation/label_propagation.pyx"],
         include_dirs=["${CMAKE_SOURCE_DIR}"],
-        libraries=["label_propagation"],
+        libraries=["label_propagation", "openblas"],
         library_dirs=["${CMAKE_BINARY_DIR}/label_propagation"],
         language="c++"
     )

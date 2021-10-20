@@ -9,7 +9,8 @@
 
 using namespace std::chrono;
 
-void populate(float *features, uint64_t *seeds, float *opf_certainty, uint64_t num_pixels, uint64_t channels) {
+void populate(float *features, uint64_t *seeds, float *opf_certainty, uint64_t num_pixels, uint64_t channels)
+{
     mt19937 rng;
     uniform_real_distribution<float> features_dist(0.0, 100.0);
     normal_distribution<float> noise_dist(0.0, 1.0);
@@ -18,26 +19,30 @@ void populate(float *features, uint64_t *seeds, float *opf_certainty, uint64_t n
     bernoulli_distribution labels_dist(0.25);
 
     // populate features
-    for (uint64_t i = 0; i < num_pixels; i++) {
-        for (uint64_t j = 0; j < channels; j++) {
+    for (uint64_t i = 0; i < num_pixels; i++)
+    {
+        for (uint64_t j = 0; j < channels; j++)
+        {
             features[i * channels + j] = features_dist(rng) + noise_dist(rng);
         }
     }
 
     // populate seeds
-    for (uint64_t i = 0; i < num_pixels; i++) {
+    for (uint64_t i = 0; i < num_pixels; i++)
+    {
         bool is_seed = seeds_dist(rng);
         seeds[i] = is_seed ? (uint64_t)labels_dist(rng) + 1 : 0;
     }
 
     // populate opf_certainty
-    for (uint64_t i = 0; i < num_pixels; i++) {
+    for (uint64_t i = 0; i < num_pixels; i++)
+    {
         opf_certainty[i] = certainty_dist(rng);
     }
-
 }
 
-int main() {
+int main()
+{
     uint64_t height = 1024;
     uint64_t width = 1024;
     uint64_t channels = 64;
@@ -56,7 +61,7 @@ int main() {
     printf("Computing IFT\n");
 
     auto start = high_resolution_clock::now();
-    compute_itf(features,
+    compute_ift(features,
                 height,
                 width,
                 seeds,
@@ -72,7 +77,7 @@ int main() {
 
     auto end = high_resolution_clock::now();
     auto duration = duration_cast<seconds>(end - start);
-    printf("IFT took %f seconds\n", (double) duration.count());
+    printf("IFT took %f seconds\n", (double)duration.count());
 
     printf("Computing certainty\n");
 
@@ -88,7 +93,7 @@ int main() {
         3);
     end = high_resolution_clock::now();
     duration = duration_cast<seconds>(end - start);
-    printf("Certainty took %f seconds\n", (double) duration.count());
+    printf("Certainty took %f seconds\n", (double)duration.count());
 
     delete[] certainty;
     delete[] pred_out;

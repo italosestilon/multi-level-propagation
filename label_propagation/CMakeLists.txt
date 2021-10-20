@@ -2,13 +2,15 @@ set(SRC
     label_propagation.cpp
     utils.cpp
     priority_queue.cpp
-    ift.cpp)
+    ift.cpp
+    opf.cpp)
 
 set(HEADERS
     label_propagation.h
     utils.h
     priority_queue.h
-    ift.h)
+    ift.h
+    opf.h)
 
 set(HEADERS ${HEADERS} PARENT_SCOPE)
 
